@@ -10,20 +10,25 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
-    public DbSet<ReviewLink> ReviewLinks => Set<ReviewLink>();
     public DbSet<Review> Reviews => Set<Review>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
-            .HasMany(u => u.ReviewLinks)
+            .HasMany(u => u.Reviews)
             .WithOne(rl => rl.User)
             .HasForeignKey(rl => rl.UserId);
 
-        modelBuilder.Entity<ReviewLink>()
-            .HasOne(rl => rl.Review)
-            .WithOne(r => r.ReviewLink)
-            .HasForeignKey<Review>(r => r.ReviewLinkId);
+        modelBuilder.Entity<Review>()
+            .HasOne(rl => rl.User)
+            .WithMany(r => r.Reviews)
+            .HasForeignKey(u => u.UserId);
+
+        modelBuilder.Entity<Review>(b =>
+        {
+            b.HasIndex(r => new { r.UserId, r.WasRated, r.SubmittedAt })
+                .HasFilter("\"WasRated\" = true");
+        });
 
         base.OnModelCreating(modelBuilder);
     }

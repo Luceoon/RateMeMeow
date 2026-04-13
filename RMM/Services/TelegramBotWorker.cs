@@ -10,6 +10,7 @@ using TelegramBotBase.Args;
 using TelegramBotBase.Base;
 using TelegramBotBase.Form;
 using TelegramBotBase.Interfaces;
+using RMM.Utils;
 using User = RMM.Models.User;
 
 namespace RMM.Services;
@@ -140,17 +141,17 @@ public class TelegramBotWorker : BackgroundService
             await context.SaveChangesAsync();
         }
 
-        var link = new Models.ReviewLink
+        var emptyReview = new Models.Review()
         {
             UserId = user.TelegramId,
-            Description = "Review requested on " + DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")
         };
 
-        context.ReviewLinks.Add(link);
+        context.Reviews.Add(emptyReview);
         await context.SaveChangesAsync();
 
-        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5000";
-        var reviewUrl = $"{baseUrl}/Review/Submit/{link.Id}";
+        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5012";
+        var encodedId = Base62Converter.Encode(emptyReview.Id);
+        var reviewUrl = $"{baseUrl}/r/{encodedId}";
 
         await session.Send($"Your unique review link:\n{reviewUrl}");
 
@@ -170,8 +171,7 @@ public class TelegramBotWorker : BackgroundService
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var reviews = await context.Reviews
-            .Include(r => r.ReviewLink)
-            .Where(r => r.ReviewLink.UserId == session.DeviceId)
+            .Where(r => r.UserId == session.DeviceId && r.WasRated)
             .OrderByDescending(r => r.SubmittedAt)
             .ToListAsync();
 
@@ -189,7 +189,8 @@ public class TelegramBotWorker : BackgroundService
             $"Well let's see... {(user.PreferredPraise == RMM.Models.Praise.GoodJob ? "Did you do a good job?" : praiseGenderText)}:\n\n";
         foreach (var r in reviews)
         {
-            var result = r.WasGood ? "? Yes" : "? No";
+            var wasGood = r.WasGood ?? false;
+            var result = wasGood ? "? Yes" : "? No";
             messageText += $"{result} from {r.ReviewerName}: {r.Comment} ({r.SubmittedAt:yyyy-MM-dd})\n";
         }
 

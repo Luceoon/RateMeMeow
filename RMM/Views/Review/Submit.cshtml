@@ -1,4 +1,4 @@
-@model RMM.Models.ReviewLink
+@model RMM.Models.Review
 
 @{
     ViewData["Title"] = "Submit Review";
@@ -13,10 +13,9 @@
 }
 
 <h2>Review for: @Model.User.Name</h2>
-<p class="description">@Model.Description</p>
 
 <form asp-action="SaveReview" method="post">
-    <input type="hidden" name="reviewLinkId" value="@Model.Id"/>
+    <input type="hidden" name="reviewId" value="@Model.Id"/>
 
     <div class="form-group">
         <label>Your Name</label>

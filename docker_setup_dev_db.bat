@@ -1,0 +1,1 @@
+docker run -d --name rmm-dev -e POSTGRES_PASSWORD=rmm -e POSTGRES_USER=rmm -e POSTGRES_DB=rmm -p 5432:5432 postgres:18.3-alpine
