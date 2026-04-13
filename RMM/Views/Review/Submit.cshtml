@@ -1,0 +1,47 @@
+@model RMM.Models.ReviewLink
+
+@{
+    ViewData["Title"] = "Submit Review";
+
+    string genderTitle = Model.User.PreferredPraise switch
+    {
+        RMM.Models.Praise.GoodBoy => "good boy",
+        RMM.Models.Praise.GoodGirl => "good girl",
+        RMM.Models.Praise.GoodJob => "good job",
+        _ => "good person"
+    };
+}
+
+<h2>Review for: @Model.User.Name</h2>
+<p class="description">@Model.Description</p>
+
+<form asp-action="SaveReview" method="post">
+    <input type="hidden" name="reviewLinkId" value="@Model.Id"/>
+
+    <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" name="reviewerName" class="form-control" placeholder="Enter your name" required/>
+    </div>
+
+    <div class="form-group">
+        @if (Model.User.PreferredPraise == RMM.Models.Praise.GoodJob)
+        {
+            <label>Has @Model.User.Name done a good job today?</label>
+        }
+        else
+        {
+            <label>Was @Model.User.Name a @genderTitle today?</label>
+        }
+        <div class="binary-rating">
+            <label><input type="radio" name="rating" value="true" required> Yes</label>
+            <label><input type="radio" name="rating" value="false"> No</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Comment</label>
+        <textarea name="comment" class="comment-area" rows="4" placeholder="Tell us more..."></textarea>
+    </div>
+
+    <button type="submit" class="submit-btn">Submit Review</button>
+</form>

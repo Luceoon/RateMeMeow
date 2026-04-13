@@ -1,0 +1,7 @@
+services:
+  RMM:
+    image: RMM
+    build:
+      context: .
+      dockerfile: RMM/Dockerfile
+

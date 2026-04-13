@@ -1,0 +1,132 @@
+﻿:root {
+    --primary-warm: #ff9800;
+    --primary-hover: #f57c00;
+    --bg-warm: #fff9f0;
+    --card-bg: #ffffff;
+    --text-warm: #4e342e;
+    --text-muted: #8d6e63;
+    --border-warm: #efe0d9;
+    --shadow-soft: 0 8px 24px rgba(78, 52, 46, 0.08);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-warm);
+    color: var(--text-warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.review-container {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--border-warm);
+}
+
+h1, h2 {
+    margin-top: 0;
+    color: var(--text-warm);
+    text-align: center;
+    font-weight: 700;
+}
+
+.description {
+    color: var(--text-muted);
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.form-control, .comment-area {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--border-warm);
+    border-radius: 12px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: var(--text-warm);
+}
+
+.form-control:focus, .comment-area:focus {
+    outline: none;
+    border-color: var(--primary-warm);
+    box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.15);
+}
+
+.binary-rating {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.binary-rating label {
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.binary-rating input[type='radio'] {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--primary-warm);
+}
+
+.comment-area {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary-warm);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.submit-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.success-icon {
+    font-size: 4rem;
+    color: var(--primary-warm);
+    margin-bottom: 1rem;
+    display: block;
+    text-align: center;
+}
