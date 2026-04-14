@@ -9,6 +9,8 @@ public class EditNameForm : AutoCleanForm
 {
     private readonly IServiceProvider _serviceProvider;
 
+    public FormBase? ReturnForm { get; set; }
+
     private bool nameSubmited = false;
 
     public EditNameForm(IServiceProvider serviceProvider)
@@ -37,8 +39,8 @@ public class EditNameForm : AutoCleanForm
             return;
         }
 
-        var settingsForm = _serviceProvider.GetRequiredService<SettingsForm>();
-        await this.NavigateTo(settingsForm);
+        var nextForm = ReturnForm ?? _serviceProvider.GetRequiredService<SettingsForm>();
+        await this.NavigateTo(nextForm);
     }
 
     private async Task UpdateName(string newName)

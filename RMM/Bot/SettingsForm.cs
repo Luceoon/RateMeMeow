@@ -68,46 +68,18 @@ public class SettingsForm : FormBase
         {
             case "edit_name":
                 var editNameForm = _serviceProvider.GetRequiredService<EditNameForm>();
+                editNameForm.ReturnForm = this;
                 await this.NavigateTo(editNameForm);
                 break;
             case "edit_gender":
-                var bf = new ButtonForm();
-                bf.AddButtonRow("Good Boy", "gender_boy");
-                bf.AddButtonRow("Good Girl", "gender_girl");
-                bf.AddButtonRow("Good Job", "gender_job");
-                bf.AddButtonRow("Cancel", "cancel_gender");
-                await this.Device.Send("Select your preferred gender title:", bf);
+                var selectPraiseForm = _serviceProvider.GetRequiredService<SelectPraiseForm>();
+                selectPraiseForm.ReturnForm = this;
+                await this.NavigateTo(selectPraiseForm);
                 break;
-            case "gender_boy":
-                await UpdateGender(Praise.GoodBoy);
-                break;
-            case "gender_girl":
-                await UpdateGender(Praise.GoodGirl);
-                break;
-            case "gender_job":
-                await UpdateGender(Praise.GoodJob);
-                break;
-            case "cancel_gender":
             case "back":
                 var startForm = _serviceProvider.GetRequiredService<StartForm>();
                 await this.NavigateTo(startForm);
                 break;
         }
-    }
-
-    private async Task UpdateGender(Praise praise)
-    {
-        using var scope = _serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var user = await context.Users.FindAsync(this.Device.DeviceId);
-        if (user != null)
-        {
-            user.PreferredPraise = praise;
-            await context.SaveChangesAsync();
-            _user = user;
-            await this.Device.Send($"Preferred gender updated to: {praise}");
-        }
-
-        await ShowMainMenu();
     }
 }

@@ -27,8 +27,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHostedService<TelegramBotWorker>();
 // The forms must be registered in DI for TelegramBotBase to resolve them
 builder.Services.AddTransient<StartForm>();
+builder.Services.AddTransient<OnboardingForm>();
 builder.Services.AddTransient<SettingsForm>();
 builder.Services.AddTransient<EditNameForm>();
+builder.Services.AddTransient<SelectPraiseForm>();
+builder.Services.AddTransient<RateForm>();
+builder.Services.AddTransient<MyReviewsForm>();
 
 var app = builder.Build();
 

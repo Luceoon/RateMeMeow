@@ -62,7 +62,6 @@ public class TelegramBotWorker : BackgroundService
 
         // Register custom command handling
         _bot.BotCommand += HandleBotCommand;
-       
 
         // Update Bot commands to botfather
         await _bot.UploadBotCommands();
@@ -86,13 +85,18 @@ public class TelegramBotWorker : BackgroundService
         switch (e.Command)
         {
             case "/start":
+                var onboardingForm = _serviceProvider.GetRequiredService<OnboardingForm>();
+                await e.Device.ActiveForm.NavigateTo(onboardingForm);
+                e.Handled = true;
                 break;
             case "/rate":
-                await HandleRateCommand(e.Device);
+                var rateForm = _serviceProvider.GetRequiredService<RateForm>();
+                await e.Device.ActiveForm.NavigateTo(rateForm);
                 e.Handled = true;
                 break;
             case "/myreviews":
-                await HandleMyReviewsCommand(e.Device);
+                var reviewsForm = _serviceProvider.GetRequiredService<MyReviewsForm>();
+                await e.Device.ActiveForm.NavigateTo(reviewsForm);
                 e.Handled = true;
                 break;
             case "/help":
@@ -120,80 +124,4 @@ public class TelegramBotWorker : BackgroundService
         }
     }
 
-    private async Task HandleRateCommand(IDeviceSession session)
-    {
-        await session.Send("Ok, give me a moment to prepare your review link... ??");
-
-        using var scope = _serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        // Ensure user exists
-        var user = await context.Users.FindAsync(session.DeviceId);
-        if (user == null)
-        {
-            user = new Models.User
-            {
-                TelegramId = session.DeviceId,
-                Name = $"User {session.DeviceId}",
-                PreferredPraise = Models.Praise.NotSpecified
-            };
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-        }
-
-        var emptyReview = new Models.Review()
-        {
-            UserId = user.TelegramId,
-        };
-
-        context.Reviews.Add(emptyReview);
-        await context.SaveChangesAsync();
-
-        var baseUrl = Environment.GetEnvironmentVariable("BASE_URL") ?? "http://localhost:5012";
-        var encodedId = Base62Converter.Encode(emptyReview.Id);
-        var reviewUrl = $"{baseUrl}/r/{encodedId}";
-
-        await session.Send($"Your unique review link:\n{reviewUrl}");
-
-        using (var qrGenerator = new QRCodeGenerator())
-        using (var qrCodeData = qrGenerator.CreateQrCode(reviewUrl, QRCodeGenerator.ECCLevel.Q))
-        using (var qrCode = new PngByteQRCode(qrCodeData))
-        {
-            byte[] qrCodeBytes = qrCode.GetGraphic(20);
-            using var ms = new MemoryStream(qrCodeBytes);
-            await session.SendPhoto(ms, "Scan this QR Code to rate.");
-        }
-    }
-
-    private async Task HandleMyReviewsCommand(IDeviceSession session)
-    {
-        using var scope = _serviceProvider.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        var reviews = await context.Reviews
-            .Where(r => r.UserId == session.DeviceId && r.WasRated)
-            .OrderByDescending(r => r.SubmittedAt)
-            .ToListAsync();
-
-        var user = await context.Users.FindAsync(session.DeviceId);
-
-        if (!reviews.Any())
-        {
-            await session.Send("You haven't received any reviews yet.");
-            return;
-        }
-
-        var praiseGenderText =
-            $"Were you a good {(user.PreferredPraise == RMM.Models.Praise.GoodBoy ? "boy" : "girl")}?";
-        var messageText =
-            $"Well let's see... {(user.PreferredPraise == RMM.Models.Praise.GoodJob ? "Did you do a good job?" : praiseGenderText)}:\n\n";
-        foreach (var r in reviews)
-        {
-            var wasGood = r.WasGood ?? false;
-            var result = wasGood ? "? Yes" : "? No";
-            messageText += $"{result} from {r.ReviewerName}: {r.Comment} ({r.SubmittedAt:yyyy-MM-dd})\n";
-        }
-
-        await session.Send(messageText);
-    }
 }
