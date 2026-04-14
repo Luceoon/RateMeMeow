@@ -21,15 +21,15 @@ public class MyReviewsForm : FormBase
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         var reviews = await context.Reviews
-            .Where(r => r.UserId == this.Device.DeviceId && r.WasRated)
+            .Where(r => r.UserId == Device.DeviceId && r.WasRated)
             .OrderByDescending(r => r.SubmittedAt)
             .ToListAsync();
 
-        var user = await context.Users.FindAsync(this.Device.DeviceId);
+        var user = await context.Users.FindAsync(Device.DeviceId);
 
         if (!reviews.Any())
         {
-            await this.Device.Send("You haven't received any reviews yet.");
+            await Device.Send("You haven't received any reviews yet.");
             return;
         }
 
@@ -44,6 +44,6 @@ public class MyReviewsForm : FormBase
             messageText += $"{result} from {r.ReviewerName}: {r.Comment} ({r.SubmittedAt:yyyy-MM-dd})\n";
         }
 
-        await this.Device.Send(messageText);
+        await Device.Send(messageText);
     }
 }

@@ -1,7 +1,43 @@
+networks:
+  rmm:
+    name: rmm-network
+    external: false
+
 services:
-  RMM:
-    image: RMM
+
+  
+  server:
+    image: ghcr.io/luceoon/rmm:latest
+    container_name: rmm-server
     build:
       context: .
       dockerfile: RMM/Dockerfile
+    environment:
+      CONNECTION_STRING: "Host=postgres;Database=rmm;Username=rmm;Password=rmm"
+      BASE_URL: "https://rmm.lunarvoid.net"
+    ports:
+      - "5012:5012"
+    networks:
+      - rmm
+    depends_on:
+      postgres:
+        condition: service_healthy
+  
+  postgres:
+    image: postgres:18.3-alpine
+    container_name: rmm-db
+    #volumes:
+    #  - ./pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 'rmm'
+      POSTGRES_PASSWORD: 'rmm'
+      POSTGRES_DB: 'rmm'
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-d", "rmm", "-U", "rmm" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - rmm
+    
 
