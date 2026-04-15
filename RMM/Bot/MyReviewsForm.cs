@@ -40,7 +40,7 @@ public class MyReviewsForm : FormBase
         foreach (var r in reviews)
         {
             var wasGood = r.WasGood ?? false;
-            var result = wasGood ? "🐾 Yes" : "🐾 No";
+            var result = wasGood ? "✅ Yes" : "❌ No";
             messageText += $"{result} from {r.ReviewerName}: {r.Comment} ({r.SubmittedAt:yyyy-MM-dd})\n";
         }
 

@@ -53,7 +53,7 @@ public class SettingsForm : FormBase
     {
         var bf = new ButtonForm();
         bf.AddButtonRow("Edit Name", "edit_name");
-        bf.AddButtonRow("Edit Preferred Gender", "edit_gender");
+        bf.AddButtonRow("Edit Preferred Praise", "edit_gender");
         bf.AddButtonRow("Back to Start", "back");
 
         await this.Device.Send(
