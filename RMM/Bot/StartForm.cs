@@ -38,3 +38,8 @@ public class StartForm : FormBase
         // Commands are handled in TelegramBotWorker for now to simplify DI access
     }
 }
+
+public static class StartFormExtensions
+{
+    public static async Task NavigateToStart(this FormBase form) => form.NavigateTo(new StartForm());
+}
