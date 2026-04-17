@@ -19,19 +19,19 @@ public class RateForm : FormBase
 
     public override async Task Load(MessageResult message)
     {
-        await this.Device.Send("Ok, give me a moment to prepare your review link... 🐾");
+        await Device.Send("Ok, give me a moment to prepare your review link... 🐾");
 
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         // Ensure user exists
-        var user = await context.Users.FindAsync(this.Device.DeviceId);
+        var user = await context.Users.FindAsync(Device.DeviceId);
         if (user == null)
         {
             user = new Models.User
             {
-                TelegramId = this.Device.DeviceId,
-                Name = $"User {this.Device.DeviceId}",
+                TelegramId = Device.DeviceId,
+                Name = $"User {Device.DeviceId}",
                 PreferredPraise = Models.Praise.NotSpecified
             };
             context.Users.Add(user);
@@ -50,7 +50,7 @@ public class RateForm : FormBase
         var encodedId = Base62Converter.Encode(emptyReview.Id);
         var reviewUrl = $"{baseUrl}/r/{encodedId}";
 
-        await this.Device.Send($"Your unique review link:\n{reviewUrl}");
+        await Device.Send($"Your unique review link:\n{reviewUrl}");
 
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(reviewUrl, QRCodeGenerator.ECCLevel.Q))
@@ -58,7 +58,9 @@ public class RateForm : FormBase
         {
             byte[] qrCodeBytes = qrCode.GetGraphic(20);
             using var ms = new MemoryStream(qrCodeBytes);
-            await this.Device.SendPhoto(ms, "Scan this QR Code to rate.");
+            await Device.SendPhoto(ms, "Scan this QR Code to rate.");
         }
+
+        await this.NavigateToStart();
     }
 }

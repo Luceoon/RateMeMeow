@@ -45,5 +45,7 @@ public class MyReviewsForm : FormBase
         }
 
         await Device.Send(messageText);
+
+        await this.NavigateToStart();
     }
 }

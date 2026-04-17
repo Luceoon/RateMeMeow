@@ -69,16 +69,15 @@ public class SettingsForm : FormBase
             case "edit_name":
                 var editNameForm = _serviceProvider.GetRequiredService<EditNameForm>();
                 editNameForm.ReturnForm = this;
-                await this.NavigateTo(editNameForm);
+                await NavigateTo(editNameForm);
                 break;
             case "edit_gender":
                 var selectPraiseForm = _serviceProvider.GetRequiredService<SelectPraiseForm>();
                 selectPraiseForm.ReturnForm = this;
-                await this.NavigateTo(selectPraiseForm);
+                await NavigateTo(selectPraiseForm);
                 break;
             case "back":
-                var startForm = _serviceProvider.GetRequiredService<StartForm>();
-                await this.NavigateTo(startForm);
+                await this.NavigateToStart();
                 break;
         }
     }

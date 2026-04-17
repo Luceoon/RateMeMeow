@@ -50,8 +50,7 @@ public class OnboardingForm : FormBase
             else
             {
                 // If user already exists, just go to StartForm
-                var startForm = new StartForm();
-                await NavigateTo(startForm);
+                await this.NavigateToStart();
             }
         }
     }
