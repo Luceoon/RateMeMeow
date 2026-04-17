@@ -30,6 +30,7 @@ public class MyReviewsForm : FormBase
         if (!reviews.Any())
         {
             await Device.Send("You haven't received any reviews yet.");
+            await this.NavigateToStart();
             return;
         }
 
