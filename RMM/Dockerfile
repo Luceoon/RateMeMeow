@@ -1,8 +1,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER root
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+RUN apt-get update && apt-get install -y --no-install-recommends curl jq \
     && rm -rf /var/lib/apt/lists/*
-USER $APP_UID
 WORKDIR /app
 EXPOSE 5012
 
@@ -20,7 +19,10 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./RMM.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+ARG APP_VERSION=0.0.0
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN jq ". + {Version: \"$APP_VERSION\"}" appsettings.json > appsettings.tmp.json && mv appsettings.tmp.json appsettings.json
+USER $APP_UID
 HEALTHCHECK --interval=1m CMD curl --fail http://localhost:8080/health || exit 1
 ENTRYPOINT ["dotnet", "RMM.dll"]

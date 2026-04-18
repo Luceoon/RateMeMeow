@@ -13,6 +13,8 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+
+
 // 2. Database Setup (via ENV)
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
@@ -36,7 +38,12 @@ builder.Services.AddTransient<MyReviewsForm>();
 
 var app = builder.Build();
 
+Log.Information($"Rate Me Meow v{app.Configuration["Version"]} starting...");
+
+
 // Auto-Migrations on start (useful for Docker)
+Log.Information("Checking for changes in database...");
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -57,5 +64,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapGet("/health", () => "OK");
+
+Log.Information("All set up! Meowtastic!");
 
 app.Run();
