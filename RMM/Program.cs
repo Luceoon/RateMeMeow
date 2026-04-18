@@ -26,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 // 4. Telegram Bot as Background Service
+builder.Services.AddSingleton<ITelegramBotService, TelegramBotService>();
 builder.Services.AddHostedService<TelegramBotWorker>();
 // The forms must be registered in DI for TelegramBotBase to resolve them
 builder.Services.AddTransient<StartForm>();

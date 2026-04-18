@@ -4,6 +4,11 @@ using RMM.Data;
 using RMM.Models;
 using RMM.Utils;
 
+using RMM.Services;
+using Serilog;
+using Telegram.Bot;
+using TelegramBotBase.Base;
+
 namespace RMM.Controllers;
 
 [Route("Review")]
@@ -11,10 +16,14 @@ namespace RMM.Controllers;
 public class ReviewController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ITelegramBotService _botService;
 
-    public ReviewController(AppDbContext context)
+    public ReviewController(AppDbContext context, IServiceProvider serviceProvider, ITelegramBotService botService)
     {
         _context = context;
+        _serviceProvider = serviceProvider;
+        _botService = botService;
     }
 
     [HttpGet("{id}")]
@@ -54,6 +63,44 @@ public class ReviewController : Controller
         review.SubmittedAt = DateTime.UtcNow;
         
         await _context.SaveChangesAsync();
+
+        var bot = _botService.GetBot();
+        if (bot != null)
+        {
+            var praise = Praise.NotSpecified;
+            
+            var user = await _context.Users.FindAsync(review.UserId);
+            if (user != null) praise = user.PreferredPraise;
+
+            var ratingStr = "";
+
+            switch (praise)
+            {
+                case Praise.GoodBoy:
+                    ratingStr = review.WasGood == true ? "You were a good boy~ 😸" : "You were no good boy 😿";
+                    break;
+                case Praise.GoodGirl:
+                    ratingStr = review.WasGood == true ? "You were a good girl~ 😸" : "You were no good girl 😿";
+                    break;
+                default:
+                    ratingStr = review.WasGood == true ? "You did a good job! 😸 " : "You did a bad job! 😿";
+                    break;
+            }
+            
+            var message = $"Review from {review.ReviewerName} received!\n" +
+                          $"{ratingStr}\n" +
+                          $"Comment: {review.Comment}";
+
+            try
+            {
+                await bot.Client.TelegramClient.SendMessage(review.UserId, message);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Failed to send message to user. Review is still saved! Error Message: " + e.Message);
+            }
+        }
+
         return View("Success");
     }
 }

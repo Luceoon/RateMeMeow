@@ -20,14 +20,16 @@ public class TelegramBotWorker : BackgroundService
     private readonly IServiceProvider _serviceProvider;
     private readonly IConfiguration _configuration;
     private readonly ILogger<TelegramBotWorker> _logger;
+    private readonly TelegramBotService _botService;
     private BotBase? _bot;
 
     public TelegramBotWorker(IServiceProvider serviceProvider, IConfiguration configuration,
-        ILogger<TelegramBotWorker> logger)
+        ILogger<TelegramBotWorker> logger, ITelegramBotService botService)
     {
         _serviceProvider = serviceProvider;
         _configuration = configuration;
         _logger = logger;
+        _botService = (TelegramBotService)botService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -59,6 +61,8 @@ public class TelegramBotWorker : BackgroundService
             .UseEnglish()
             .UseThreadPool()
             .Build();
+
+        _botService.SetBot(_bot);
 
         // Register custom command handling
         _bot.BotCommand += HandleBotCommand;
