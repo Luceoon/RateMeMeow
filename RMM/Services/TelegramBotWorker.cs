@@ -104,7 +104,8 @@ public class TelegramBotWorker : BackgroundService
                 e.Handled = true;
                 break;
             case "/help":
-                await e.Device.Send("[Todo: Implement Help here!] :3");
+                var helpForm = _serviceProvider.GetRequiredService<HelpForm>();
+                await e.Device.ActiveForm.NavigateTo(helpForm);
                 e.Handled = true;
                 break;
             case "/settings":
