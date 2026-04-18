@@ -1,10 +1,10 @@
-name: build
+name: build-dev
 on:
   push:
     branches:
       - main
 jobs:
-  publish-docker-image:
+  build-and-publish-dev:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -19,6 +19,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker Image
-        run: docker build --tag ghcr.io/luceoon/rmm:latest --label "org.opencontainers.image.source=https://github.com/Luceoon/RateMeMeow" --file RMM/Dockerfile .
+        run: docker build --tag ghcr.io/luceoon/rmm:dev --label "org.opencontainers.image.source=https://github.com/Luceoon/RateMeMeow" --file RMM/Dockerfile .
       - name: Push Docker Image
-        run: docker push ghcr.io/luceoon/rmm:latest
+        run: docker push ghcr.io/luceoon/rmm:dev
