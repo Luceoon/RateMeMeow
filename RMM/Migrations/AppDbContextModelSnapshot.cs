@@ -31,6 +31,9 @@ namespace RMM.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("ReviewerName")
                         .HasColumnType("text");
 
