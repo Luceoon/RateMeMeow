@@ -35,8 +35,8 @@ public class HelpForm : FormBase
         
         var msg = $"RMM (Rate Me Meow) v[{configuration["Version"]}]\n" +
                   "Created by Luceoon\n\n" +
-                  "This bot allows you to request ratings from other people whether were you good today or not.\n" +
-                  "Use /rate to create a new rating link (including a handy qr code to use right away).\n" +
+                  "This bot allows you to request ratings from other people whether you were good today or not.\n" +
+                  "Use /rate to create a new rating link (including a handy QR code to use right away).\n" +
                   "Use /myreviews to see a list of all the reviews you already received.\n" +
                   "Use /settings to customize your profile like setting your name and preferred praise.\n" +
                   $"Currently I know you as \"{nameStr}\" and I will use the praise \"{praiseStr}\".";
