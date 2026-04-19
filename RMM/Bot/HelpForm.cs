@@ -2,7 +2,6 @@
 using TelegramBotBase.Base;
 using TelegramBotBase.Form;
 using RMM.Data;
-using RMM.Models;
 
 namespace RMM.Bot;
 
