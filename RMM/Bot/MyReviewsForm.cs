@@ -18,7 +18,7 @@ public class MyReviewsForm : FormBase
     public override async Task Load(MessageResult message)
     {
         await Device.SetAction(Telegram.Bot.Types.Enums.ChatAction.Typing);
-        
+
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
