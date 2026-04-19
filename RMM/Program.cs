@@ -32,6 +32,7 @@ builder.Services.AddHostedService<TelegramBotWorker>();
 builder.Services.AddTransient<StartForm>();
 builder.Services.AddTransient<OnboardingForm>();
 builder.Services.AddTransient<SettingsForm>();
+builder.Services.AddTransient<HelpForm>();
 builder.Services.AddTransient<EditNameForm>();
 builder.Services.AddTransient<SelectPraiseForm>();
 builder.Services.AddTransient<RateForm>();
@@ -39,7 +40,7 @@ builder.Services.AddTransient<MyReviewsForm>();
 
 var app = builder.Build();
 
-Log.Information($"Rate Me Meow v{app.Configuration["Version"]} starting...");
+Log.Information($"RMM (Rate Me Meow) [{app.Configuration["Version"]}] starting...");
 
 
 // Auto-Migrations on start (useful for Docker)
