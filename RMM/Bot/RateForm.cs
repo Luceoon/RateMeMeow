@@ -21,7 +21,7 @@ public class RateForm : FormBase
 
     public override async Task Load(MessageResult message)
     {
-        await Device.Send("Ok, give me a moment to prepare your review link... 🐾");
+        await Device.SetAction(Telegram.Bot.Types.Enums.ChatAction.Typing);
 
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
