@@ -12,6 +12,8 @@ public class RateForm : FormBase
 {
     private readonly IServiceProvider _serviceProvider;
 
+    public string? ReviewerName { get; set; }
+
     public RateForm(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
@@ -41,6 +43,7 @@ public class RateForm : FormBase
         var emptyReview = new Models.Review()
         {
             UserId = user.TelegramId,
+            ReviewerName = string.IsNullOrWhiteSpace(ReviewerName) ? null : ReviewerName.Trim(),
         };
 
         context.Reviews.Add(emptyReview);
