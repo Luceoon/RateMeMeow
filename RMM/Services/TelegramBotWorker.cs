@@ -95,6 +95,8 @@ public class TelegramBotWorker : BackgroundService
                 break;
             case "/rate":
                 var rateForm = _serviceProvider.GetRequiredService<RateForm>();
+                if (e.Parameters != null && e.Parameters.Count > 0)
+                    rateForm.ReviewerName = string.Join(" ", e.Parameters);
                 await e.Device.ActiveForm.NavigateTo(rateForm);
                 e.Handled = true;
                 break;

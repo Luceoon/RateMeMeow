@@ -57,7 +57,7 @@ public class ReviewController : Controller
         
         review.WasRated = true;
         
-        review.ReviewerName = reviewerName ?? "Anonymous";
+        review.ReviewerName = review.ReviewerName ?? reviewerName ?? "Anonymous";
         review.WasGood = rating;
         review.Comment = comment ?? string.Empty;
         review.SubmittedAt = DateTime.UtcNow;
